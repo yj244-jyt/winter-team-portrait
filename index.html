@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Winter House Portrait</title><link rel="stylesheet" href="styles.css"></head>
+<body><main class="app-shell">
+<header class="topbar"><b>Residence Life</b><span id="network" role="status">Opening room…</span></header>
+<section class="hero"><div><p class="eyebrow">Winter team icebreaker</p><h1>Winter House Portrait</h1></div>
+<svg width="136" height="95" viewBox="0 0 136 95" aria-hidden="true"><path fill="#28615c" d="M9 49L42 16l33 33v37H9z"/><path fill="#b95244" d="M63 54l27-29 30 29v32H63z"/><path fill="none" stroke="#bdd6d9" stroke-width="7" d="M4 48l38-38 37 37m-15 4l26-29 34 32"/><path fill="#ffdc86" d="M19 56h12v14H19zm30 0h12v14H49zm31 3h12v13H80z"/><path fill="#b9d1d5" d="M0 84q24-9 51-2t85-1v12H0z"/></svg></section>
+<section id="lobby" hidden><div class="section-heading"><div><p class="kicker">Team collection</p><h2>Your portrait card</h2></div><b id="count"></b></div>
+<form id="entry" class="player-form"><label class="field">Name<input name="name" required maxlength="40" autocomplete="given-name"></label>
+<label class="field">Three keywords, separated by /<input name="keywords" required maxlength="140" placeholder="coffee / hiking / problem solver"></label>
+<div class="form-row"><label class="field">Favorite color<input name="color" placeholder="Forest green" required maxlength="40"></label>
+<label class="field">One object that represents you<input name="object" placeholder="My travel mug" required maxlength="80"></label></div>
+<label class="field">Short fun fact (optional)<input name="fact" maxlength="160"></label>
+<label class="field">Portrait reference (optional)<input type="file" name="photo" accept="image/jpeg,image/png,image/webp"></label>
+<small>The host receives your card for this game and the team's AI portrait. Only upload a photo you want included.</small>
+<button class="button button-primary">Submit my card</button></form>
+<p id="receipt" role="status"></p>
+<div id="hostTools" hidden><p id="roster"></p><label class="field">Player invitation<input id="invite" readonly></label><div class="guess-actions"><button id="copy" class="button button-soft">Copy player link</button><button id="start" class="button button-primary">End collection &amp; start guessing</button></div>
+<details><summary>Import a player's backup card</summary><input id="importCard" type="file" accept=".json"></details></div>
+<button id="backup" class="button button-soft" hidden>Download my backup card</button></section>
+<section id="game" hidden aria-live="polite"><p class="kicker" id="round"></p><h2>Who is it?</h2><div class="hint-card"><div><small id="hintNo"></small><strong id="hint"></strong></div></div><p id="answer"></p><div class="guess-actions" id="controls"><button class="button button-soft" id="more">Next hint</button><button class="button button-primary" id="reveal">We guessed it · Reveal</button><button class="button button-primary" id="next">Next teammate</button></div></section>
+<section id="finish" hidden><p class="kicker">Residence Life</p><h2>That's the whole team.</h2><p id="summary"></p><div id="exports" hidden><button id="brief" class="button button-primary">Download portrait brief</button> <button id="json" class="button button-soft">Download team data &amp; photos</button> <button id="refs" class="button button-soft">Download photo sheet</button><p><button id="newRoom" class="button button-ghost">Create another room</button></p></div></section>
+<p id="notice" role="alert"></p></main><script src="peerjs.min.js"></script><script src="app.js"></script></body></html>
