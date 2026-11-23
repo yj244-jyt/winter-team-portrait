@@ -7,7 +7,7 @@ const room = host ? (localStorage.winterHostRoom ||= newCode()) : roomParam.toLo
 const key = "winter-house-v3:" + room;
 const blank = () => ({players: [], rounds: [], phase: "collect", index: 0, step: 0, shown: false, deadline: 0});
 let state = host ? JSON.parse(localStorage.getItem(key) || "null") || blank() : null;
-let card = null, connection, peer, retry, timer, lastView;
+let card = null, connection, peer, retry, timer, syncTimer, lastView;
 const clients = new Set();
 const playerKey = key + ":player";
 const playerId = localStorage.getItem(playerKey) || crypto.randomUUID();
@@ -58,7 +58,13 @@ function publish() {
   localStorage.setItem(key, JSON.stringify(state));
   const v = publicView();
   draw(v);
-  for (const c of clients) if(c.open) c.send({view:v});
+  const broadcast = () => { for (const c of clients) if(c.open) c.send({view:publicView()}); };
+  clearInterval(syncTimer);
+  broadcast();
+  if (host) {
+    let attempts = 0;
+    syncTimer = setInterval(() => { broadcast(); if (++attempts >= 5) clearInterval(syncTimer); }, 1000);
+  }
   clearTimeout(timer);
   if (state.phase === "guess" && !state.shown && state.deadline)
     timer = setTimeout(reveal, Math.max(0, state.deadline-Date.now()));
