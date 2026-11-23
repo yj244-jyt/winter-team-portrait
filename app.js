@@ -27,9 +27,11 @@ function mix(values) {
 function publicView() {
   const r = state.rounds[state.index];
   return {phase:state.phase, count:state.players.length, index:state.index, step:state.step,
-    hint:r?.hints[state.step], answer:state.shown ? r?.name : "", deadline:state.deadline};
+    hint:r?.hints[state.step], answer:state.shown ? r?.name : "", deadline:state.deadline,
+    revision:state.revision || 0};
 }
 function draw(v) {
+  if (!host && lastView && (v.revision || 0) < (lastView.revision || 0)) return;
   lastView = v;
   show("lobby", v.phase === "collect");
   show("game", v.phase === "guess");
@@ -49,6 +51,7 @@ function draw(v) {
   $("summary").textContent = host ? "Your winter portrait brief and team references are ready." : "Your host has the team's portrait brief.";
 }
 function publish() {
+  state.revision = (state.revision || 0) + 1;
   localStorage.setItem(key, JSON.stringify(state));
   const v = publicView();
   draw(v);
@@ -114,7 +117,7 @@ function connect() {
   });
 }
 async function thumbnail(file) {
-  if(!file.size) return "";
+  if(!file || !file.size) return "";
   const img=new Image(), url=URL.createObjectURL(file);
   try {
     img.src=url; await img.decode();
@@ -176,6 +179,7 @@ $("refs").onclick=async()=>{
     canvas.toBlob(b=>{if(b)download("team-reference-sheet.png",b,"image/png");},"image/png");
   }catch{note("Could not build the photo sheet. Use the team JSON export.");}
 };
+$("refreshRoom").onclick=()=>{if(host) location.reload();};
 $("newRoom").onclick=()=>{if(host && confirm("Start a new room? Download your team data first.")){localStorage.winterHostRoom=newCode();location.reload();}};
 if(host) publish();else draw({phase:"collect",count:0,index:0,step:0});
 connect();
