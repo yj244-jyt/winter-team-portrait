@@ -27,6 +27,17 @@ function mix(values) {
   }
   return a;
 }
+function factWord(fact) {
+  const words = fact.match(/[A-Za-z0-9][A-Za-z0-9'-]*/g) || [];
+  return words[Math.floor(Math.random() * words.length)] || "";
+}
+function hintOptions(player) {
+  const options = player.keywords.map(keyword => "Keyword: " + keyword);
+  options.push("Object: " + player.object);
+  const word = factWord(player.fact);
+  if (word) options.push("Fun fact word: " + word);
+  return mix(options).slice(0, 3);
+}
 function publicView() {
   const r = state.rounds[state.index];
   return {phase:state.phase, count:state.players.length, index:state.index, step:state.step,
@@ -74,7 +85,7 @@ function checked(p) {
   if (!p || !str(p.id,80) || !str(p.name,40) || !str(p.color,40) || !str(p.object,80) ||
     !Array.isArray(p.keywords) || p.keywords.length !== 3 || !p.keywords.every(k=>str(k,140)) ||
     typeof p.fact !== "string" || p.fact.length > 160 || typeof p.photo !== "string" ||
-    (p.photo && (!/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo) || p.photo.length>100000))) throw Error("Invalid card. Check the required fields and three keywords.");
+    (p.photo && (!/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo) || p.photo.length>100000))) throw Error("Invalid card. Check the required fields and use three keywords separated by /.");
   return {id:p.id,name:p.name,keywords:p.keywords,color:p.color,object:p.object,fact:p.fact,photo:p.photo};
 }
 function receive(raw) {
@@ -141,7 +152,7 @@ $("entry").onsubmit=async e=>{
   e.preventDefault();
   const f=new FormData(e.target);
   try {
-    card=checked({id:playerId,name:f.get("name").trim(),keywords:f.get("keywords").split(/[/,，、]/).map(s=>s.trim()),
+    card=checked({id:playerId,name:f.get("name").trim(),keywords:f.get("keywords").split("/").map(s=>s.trim()),
       color:f.get("color").trim(),object:f.get("object").trim(),fact:f.get("fact").trim(),photo:await thumbnail(f.get("photo"))});
     note("");
     if(host) { receive(card); $("receipt").textContent="Your card is in the room."; }
@@ -151,7 +162,7 @@ $("entry").onsubmit=async e=>{
 $("copy").onclick=async()=>{try{await navigator.clipboard.writeText(invite.href); note("Player link copied.");}catch{$("invite").select();note("Copy the selected player link.");}};
 $("start").onclick=()=>{
   if(!host || state.phase!=="collect" || !state.players.length) return;
-  state.rounds=mix(state.players).map(p=>({name:p.name,hints:mix(["My keywords: "+p.keywords.join(" / "),"My favorite color: "+p.color,"My object: "+p.object,...(p.fact?["Fun fact: "+p.fact]:[])]).slice(0,3)}));
+  state.rounds=mix(state.players).map(p=>({name:p.name,hints:hintOptions(p)}));
   state.phase="guess"; publish(); note("");
 };
 function reveal(){if(!host || state.phase!=="guess")return; state.shown=true;state.deadline=0;publish();}
@@ -189,7 +200,14 @@ $("refs").onclick=async()=>{
   }catch{note("Could not build the photo sheet. Use the team JSON export.");}
 };
 $("refreshRoom").onclick=()=>{if(host) location.reload();};
-$("newRoom").onclick=()=>{if(host && confirm("Start a new room? Download your team data first.")){localStorage.winterHostRoom=newCode();location.reload();}};
+function createRoom() {
+  if(host && confirm("Start a new room? Download your team data first.")) {
+    localStorage.winterHostRoom=newCode();
+    location.reload();
+  }
+}
+$("newRoom").onclick=createRoom;
+$("newRoomFinish").onclick=createRoom;
 if(host) publish();else draw({phase:"collect",count:0,index:0,step:0});
 connect();
 } catch (error) {
