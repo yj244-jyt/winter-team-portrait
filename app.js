@@ -1,8 +1,6 @@
 "use strict";
 const $ = id => document.getElementById(id);
-const roomParam = new URL(location.href).searchParams.get("room");
-const host = roomParam === null;
-const room = roomParam ?? (localStorage.winterHostRoom ||= crypto.randomUUID());
+const room = host ? (localStorage.winterHostRoom ||= newCode()) : roomParam.toLowerCase();
 const key = "winter-house-v3:" + room;
 const blank = () => ({players: [], rounds: [], phase: "collect", index: 0, step: 0, shown: false, deadline: 0});
 let state = host ? JSON.parse(localStorage.getItem(key) || "null") || blank() : null;
@@ -11,10 +9,11 @@ const clients = new Set();
 const playerKey = key + ":player";
 const playerId = localStorage.getItem(playerKey) || crypto.randomUUID();
 localStorage.setItem(playerKey, playerId);
-const invite = new URL(location.href);
-invite.search = new URLSearchParams({room});
+const invite = new URL(location.protocol === "file:" ? "https://yj244-jyt.github.io/winter-team-portrait/" : location.href);
+invite.search = new URLSearchParams({role:"player", room});
 invite.hash = "";
 $("invite").value = invite.href;
+$("roomCode").textContent = room;
 const show = (id, visible) => { $(id).hidden = !visible; };
 const note = message => { $("notice").textContent = message; };
 function mix(values) {
@@ -177,6 +176,6 @@ $("refs").onclick=async()=>{
     canvas.toBlob(b=>{if(b)download("team-reference-sheet.png",b,"image/png");},"image/png");
   }catch{note("Could not build the photo sheet. Use the team JSON export.");}
 };
-$("newRoom").onclick=()=>{if(confirm("Start a new room? Download your team data first.")){localStorage.winterHostRoom=crypto.randomUUID();location.reload();}};
+$("newRoom").onclick=()=>{if(host && confirm("Start a new room? Download your team data first.")){localStorage.winterHostRoom=newCode();location.reload();}};
 if(host) publish();else draw({phase:"collect",count:0,index:0,step:0});
 connect();
