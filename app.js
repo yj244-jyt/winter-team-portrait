@@ -1,4 +1,5 @@
 "use strict";
+{
 const $ = id => document.getElementById(id);
 const room = host ? (localStorage.winterHostRoom ||= newCode()) : roomParam.toLowerCase();
 const key = "winter-house-v3:" + room;
@@ -183,3 +184,4 @@ $("refreshRoom").onclick=()=>{if(host) location.reload();};
 $("newRoom").onclick=()=>{if(host && confirm("Start a new room? Download your team data first.")){localStorage.winterHostRoom=newCode();location.reload();}};
 if(host) publish();else draw({phase:"collect",count:0,index:0,step:0});
 connect();
+}
