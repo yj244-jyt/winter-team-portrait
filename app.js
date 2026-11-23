@@ -1,4 +1,5 @@
 "use strict";
+if (host || validCode(roomParam)) {
 {
 try {
 const $ = id => document.getElementById(id);
@@ -189,5 +190,6 @@ connect();
   console.error("Winter House Portrait failed to start", error);
   const notice = document.getElementById("notice");
   if (notice) notice.textContent = "Room could not open. Refresh this page and try the player link again.";
+}
 }
 }
