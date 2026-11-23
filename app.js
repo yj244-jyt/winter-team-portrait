@@ -27,15 +27,10 @@ function mix(values) {
   }
   return a;
 }
-function factWord(fact) {
-  const words = fact.match(/[A-Za-z0-9][A-Za-z0-9'-]*/g) || [];
-  return words[Math.floor(Math.random() * words.length)] || "";
-}
 function hintOptions(player) {
   const options = player.keywords.map(keyword => "Keyword: " + keyword);
   options.push("Object: " + player.object);
-  const word = factWord(player.fact);
-  if (word) options.push("Fun fact word: " + word);
+  if (player.fact) options.push("Fun fact: " + player.fact);
   return mix(options).slice(0, 3);
 }
 function publicView() {
