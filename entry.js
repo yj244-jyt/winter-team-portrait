@@ -8,10 +8,10 @@ const validCode = code => /^(?:[a-f0-9]{10}|[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0
 const newCode = () => crypto.randomUUID().replaceAll("-", "").slice(0,10);
 document.getElementById("roleLabel").textContent = host ? "Residence Life · Host" : "Residence Life · Player";
 if (host || validCode(roomParam)) {
-  const script = document.createElement("script");
-  script.src = "app.js?v=6";
-  script.async = false;
-  document.body.append(script);
+  fetch("app.js?v=7", {cache:"no-store"})
+    .then(response => { if (!response.ok) throw Error("App script unavailable"); return response.text(); })
+    .then(source => new Function("host", "roomParam", "newCode", source)(host, roomParam, newCode))
+    .catch(() => { document.getElementById("notice").textContent = "Room could not open. Refresh this page and try the player link again."; });
 } else {
   document.getElementById("join").hidden = false;
   document.getElementById("network").textContent = "Player entrance";
