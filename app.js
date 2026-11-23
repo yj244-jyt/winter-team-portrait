@@ -153,7 +153,7 @@ $("entry").onsubmit=async e=>{
   const f=new FormData(e.target);
   try {
     card=checked({id:playerId,name:f.get("name").trim(),keywords:f.get("keywords").split("/").map(s=>s.trim()),
-      color:f.get("color").trim(),object:f.get("object").trim(),fact:f.get("fact").trim(),photo:await thumbnail(f.get("photo"))});
+      color:f.get("color").trim(),object:f.get("object").trim(),fact:f.get("fact").trim(),photo:""});
     note("");
     if(host) { receive(card); $("receipt").textContent="Your card is in the room."; }
     else { show("backup",true); $("receipt").textContent="Waiting for host confirmation. If the connection stalls, send your backup card privately to the host."; transmit(); }
