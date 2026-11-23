@@ -13,7 +13,7 @@ const playerKey = key + ":player";
 const playerId = localStorage.getItem(playerKey) || crypto.randomUUID();
 localStorage.setItem(playerKey, playerId);
 const invite = new URL(location.protocol === "file:" ? "https://yj244-jyt.github.io/winter-team-portrait/" : location.href);
-invite.search = new URLSearchParams({role:"player", room});
+invite.search = new URLSearchParams({role:"player", room, v:"13"});
 invite.hash = "";
 $("invite").value = invite.href;
 $("roomCode").textContent = room;
