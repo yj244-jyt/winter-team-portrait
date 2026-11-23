@@ -1,5 +1,6 @@
 "use strict";
 {
+try {
 const $ = id => document.getElementById(id);
 const room = host ? (localStorage.winterHostRoom ||= newCode()) : roomParam.toLowerCase();
 const key = "winter-house-v3:" + room;
@@ -184,4 +185,9 @@ $("refreshRoom").onclick=()=>{if(host) location.reload();};
 $("newRoom").onclick=()=>{if(host && confirm("Start a new room? Download your team data first.")){localStorage.winterHostRoom=newCode();location.reload();}};
 if(host) publish();else draw({phase:"collect",count:0,index:0,step:0});
 connect();
+} catch (error) {
+  console.error("Winter House Portrait failed to start", error);
+  const notice = document.getElementById("notice");
+  if (notice) notice.textContent = "Room could not open. Refresh this page and try the player link again.";
+}
 }

@@ -9,7 +9,7 @@ const newCode = () => crypto.randomUUID().replaceAll("-", "").slice(0,10);
 document.getElementById("roleLabel").textContent = host ? "Residence Life · Host" : "Residence Life · Player";
 if (host || validCode(roomParam)) {
   const script = document.createElement("script");
-  script.src = "app.js?v=4";
+  script.src = "app.js?v=5";
   document.body.append(script);
 } else {
   document.getElementById("join").hidden = false;
